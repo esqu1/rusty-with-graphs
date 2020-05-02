@@ -68,6 +68,35 @@ pub mod graph {
         fn add_edge(&mut self, e: Edge);
     }
 
+    impl<U : Default> GraphMutate for GraphBase<U> {
+        fn add_edge(self: &mut GraphBase<U>, e: Edge) {
+            let mut v1 = e.v1.to_owned();
+            let mut v2 = e.v2.to_owned();
+            if !self.is_directed {
+                v1 = std::cmp::min(e.v1.to_owned(), e.v2.to_owned());
+                v2 = std::cmp::max(e.v1.to_owned(), e.v2.to_owned());
+            }
+
+            // make default vertices if they don't exist already
+            if let None = self.vertices.get(&v1) {
+                let new_v = Vertex {
+                    id: v1.to_owned(),
+                    info: U::default(),
+                    weight: 0.0,
+                };
+                self.vertices.insert(v1, new_v);
+            }
+            if let None = self.vertices.get(&v2) {
+                let new_v = Vertex {
+                    id: v2.to_owned(),
+                    info: U::default(),
+                    weight: 0.0,
+                };
+                self.vertices.insert(v2, new_v);
+            }
+        }
+    }
+
     impl<U : Default> GraphMutate for AdjacencyListGraph<U> {
         fn add_edge(self: &mut AdjacencyListGraph<U>, e: Edge) {
             let mut v1 = e.v1.to_owned();
@@ -77,23 +106,6 @@ pub mod graph {
                 v2 = std::cmp::max(e.v1.to_owned(), e.v2.to_owned());
             }
 
-            // make default vertices if they don't exist already
-            if let None = self.graph.vertices.get(&v1) {
-                let new_v = Vertex {
-                    id: v1.to_owned(),
-                    info: U::default(),
-                    weight: 0.0,
-                };
-                self.graph.vertices.insert(v1, new_v);
-            }
-            if let None = self.graph.vertices.get(&v2) {
-                let new_v = Vertex {
-                    id: v2.to_owned(),
-                    info: U::default(),
-                    weight: 0.0,
-                };
-                self.graph.vertices.insert(v2, new_v);
-            }
             if let Some(set) = self.adj_list.get_mut(&v1) {
                 set.insert(v2, e.weight.to_owned());
             }
@@ -102,6 +114,24 @@ pub mod graph {
                     set.insert(v2, e.weight.to_owned());
                 }
             }
+            self.graph.add_edge(e);
+        }
+    }
+
+    impl<U: Default> GraphMutate for AdjacencyMatrixGraph<U> {
+        fn add_edge(self: &mut AdjacencyMatrixGraph<U>, e: Edge) {
+            let mut v1 = e.v1.to_owned();
+            let mut v2 = e.v2.to_owned();
+            if !self.graph.is_directed {
+                v1 = std::cmp::min(e.v1.to_owned(), e.v2.to_owned());
+                v2 = std::cmp::max(e.v1.to_owned(), e.v2.to_owned());
+            }
+
+            self.adj_matrix.set((v1 as usize, v2 as usize), e.weight);
+            if !self.graph.is_directed {
+                self.adj_matrix.set((v2 as usize, v2 as usize), e.weight);
+            }
+            self.graph.add_edge(e);
         }
     }
 }

@@ -1,4 +1,5 @@
 mod lib;
+mod search;
 use std::collections::HashMap;
 use lib::graph::GraphMutate;
 use lib::graph::GraphBase;

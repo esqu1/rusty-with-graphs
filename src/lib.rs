@@ -4,11 +4,6 @@ pub mod graph {
     use std::collections::HashMap;
     use matrix::prelude::*;
 
-    #[derive(PartialEq, Debug)]
-    pub enum NotFoundError {
-        NotFound,
-    }
-
     pub struct Vertex<T : Default> {
         pub id: i32,
         pub info: T,
@@ -36,31 +31,56 @@ pub mod graph {
         pub adj_matrix: Compressed<f64>,
     }
 
-    pub trait Neighbor {
-        fn neighbors(&self, vertex_id: &i32) -> Result<HashMap<i32, f64>, NotFoundError>;
+    pub trait Graph {
+        fn neighbors(&self, vertex_id: &i32) -> Option<HashMap<i32, f64>>;
+        fn degree(&self, vertex_id: &i32) -> Option<usize>;
     }
     
-    impl<U : Default> Neighbor for AdjacencyListGraph<U> {
-        fn neighbors(self : &AdjacencyListGraph<U>, vertex_id: &i32) -> Result<HashMap<i32, f64>, NotFoundError> {
+    impl<U : Default> Graph for AdjacencyListGraph<U> {
+        fn neighbors(self : &AdjacencyListGraph<U>, vertex_id: &i32) -> Option<HashMap<i32, f64>> {
             if let Some(x) = self.adj_list.get(vertex_id) {
-                Ok(x.clone())
+                Some(x.clone())
             } else {
-                Err(NotFoundError::NotFound) 
+                None
             }
+        }
+
+        fn degree(self: &AdjacencyListGraph<U>, vertex_id: &i32) -> Option<usize> {
+            self.adj_list.get(vertex_id).map(|x| x.len())
         }
     }
 
-    impl<U : Default> Neighbor for AdjacencyMatrixGraph<U> {
-        fn neighbors(self : &AdjacencyMatrixGraph<U>, vertex_id: &i32) -> Result<HashMap<i32, f64>, NotFoundError> {
+    /**
+     * Assumes number of vertices = maximum ID + 1
+     */
+    impl<U : Default> Graph for AdjacencyMatrixGraph<U> {
+        fn neighbors(self : &AdjacencyMatrixGraph<U>, vertex_id: &i32) -> Option<HashMap<i32, f64>> {
+            if *vertex_id as usize >= self.adj_matrix.rows() {
+                None
+            } else {
+                let num_columns = self.adj_matrix.columns();
+                let mut map = HashMap::new();
+                for i in 0..num_columns {
+                    let weight = self.adj_matrix.get((*vertex_id as usize, i));
+                    if weight.is_finite(){
+                        map.insert(i as i32, weight);
+                    }
+                }
+                Some(map)
+            }
+        }
+
+        fn degree(self: &AdjacencyMatrixGraph<U>, vertex_id: &i32) -> Option<usize> {
+            // TODO: make this more efficient 
             let num_columns = self.adj_matrix.columns();
-            let mut map = HashMap::new();
+            let mut deg = 0;
             for i in 0..num_columns {
                 let weight = self.adj_matrix.get((*vertex_id as usize, i));
-                if weight != 0.0 {
-                    map.insert(i as i32, weight);
+                if weight.is_finite() {
+                    deg += 1;
                 }
             }
-            Ok(map)
+            Some(deg)
         }
     }
 

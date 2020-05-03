@@ -1,5 +1,6 @@
 mod lib;
 mod search;
+mod flow;
 use lib::graph::GraphBase;
 use lib::graph::GraphMutate;
 use std::collections::HashMap;

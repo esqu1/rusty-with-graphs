@@ -127,12 +127,8 @@ pub mod graph {
 
     impl<U: Default> GraphMutate for AdjacencyListGraph<U> {
         fn add_edge(self: &mut AdjacencyListGraph<U>, e: Edge) {
-            let mut v1 = e.v1.to_owned();
-            let mut v2 = e.v2.to_owned();
-            if !self.graph.is_directed {
-                v1 = std::cmp::min(e.v1.to_owned(), e.v2.to_owned());
-                v2 = std::cmp::max(e.v1.to_owned(), e.v2.to_owned());
-            }
+            let v1 = e.v1;
+            let v2 = e.v2;
 
             if let Some(set) = self.adj_list.get_mut(&v1) {
                 set.insert(v2, e.weight.to_owned());

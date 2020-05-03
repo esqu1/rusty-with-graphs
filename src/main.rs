@@ -23,6 +23,9 @@ fn main() {
         graph: g,
         adj_list: HashMap::new(),
     };
-    add_edge!(&mut adj_g, 2.0, 4, 1);
-    println!("Hello, world!");
+    add_edge!(&mut adj_g, 1.0, 1, 2);
+    add_edge!(&mut adj_g, 1.0, 2, 3);
+    add_edge!(&mut adj_g, 1.0, 1, 4);
+    add_edge!(&mut adj_g, 1.0, 4, 5);
+    search::bfs_print(&adj_g, &1);
 }

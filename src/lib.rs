@@ -4,6 +4,7 @@ pub mod graph {
     use std::collections::HashMap;
     use matrix::prelude::*;
 
+    #[derive(Debug)]
     pub struct Vertex<T : Default> {
         pub id: i32,
         pub info: T,
@@ -31,13 +32,18 @@ pub mod graph {
         pub adj_matrix: Compressed<f64>,
     }
 
-    pub trait Graph {
+    pub trait Graph<U : Default> {
         fn neighbors(&self, vertex_id: &i32) -> Option<HashMap<i32, f64>>;
         fn degree(&self, vertex_id: &i32) -> Option<usize>;
+        fn get_vertices(&self) -> &HashMap<i32, Vertex<U>>;
     }
     
-    impl<U : Default> Graph for AdjacencyListGraph<U> {
+    impl<U : Default> Graph<U> for AdjacencyListGraph<U> {
+        fn get_vertices(self: &Self) -> &HashMap<i32, Vertex<U>> {
+            &self.graph.vertices 
+        }
         fn neighbors(self : &AdjacencyListGraph<U>, vertex_id: &i32) -> Option<HashMap<i32, f64>> {
+            
             if let Some(x) = self.adj_list.get(vertex_id) {
                 Some(x.clone())
             } else {
@@ -53,7 +59,10 @@ pub mod graph {
     /**
      * Assumes number of vertices = maximum ID + 1
      */
-    impl<U : Default> Graph for AdjacencyMatrixGraph<U> {
+    impl<U : Default> Graph<U> for AdjacencyMatrixGraph<U> {
+        fn get_vertices(self: &Self) -> &HashMap<i32, Vertex<U>> {
+            &self.graph.vertices 
+        }
         fn neighbors(self : &AdjacencyMatrixGraph<U>, vertex_id: &i32) -> Option<HashMap<i32, f64>> {
             if *vertex_id as usize >= self.adj_matrix.rows() {
                 None
@@ -128,10 +137,18 @@ pub mod graph {
 
             if let Some(set) = self.adj_list.get_mut(&v1) {
                 set.insert(v2, e.weight.to_owned());
+            } else {
+                let mut new_map = HashMap::new();
+                new_map.insert(v2, e.weight.to_owned());
+                self.adj_list.insert(v1, new_map);
             }
             if !self.graph.is_directed {
                 if let Some(set) = self.adj_list.get_mut(&v2) {
-                    set.insert(v2, e.weight.to_owned());
+                    set.insert(v1, e.weight.to_owned());
+                } else {
+                    let mut new_map = HashMap::new();
+                    new_map.insert(v1, e.weight.to_owned());
+                    self.adj_list.insert(v2, new_map);
                 }
             }
             self.graph.add_edge(e);

@@ -1,14 +1,18 @@
 use crate::lib::graph::Graph;
 use crate::lib::graph::Vertex;
-use std::collections::VecDeque;
 use std::collections::HashSet;
+use std::collections::VecDeque;
 
-
-pub fn bfs_fold<T: Default, U>(graph : &dyn Graph<T>, vertex_id: &i32, fold_func: &dyn Fn(&Vertex<T>, U) -> U, base: U) {
-    let mut queue : VecDeque<i32> = VecDeque::new();
-    let mut visited_set : HashSet<i32> = HashSet::new();
+pub fn bfs_fold<T: Default, U>(
+    graph: &dyn Graph<T>,
+    vertex_id: &i32,
+    fold_func: &dyn Fn(&Vertex<T>, U) -> U,
+    base: U,
+) -> U {
+    let mut queue: VecDeque<i32> = VecDeque::new();
+    let mut visited_set: HashSet<i32> = HashSet::new();
     let mut acc = base;
-    queue.push_back(vertex_id.clone()); 
+    queue.push_back(vertex_id.clone());
     while queue.len() > 0 {
         if let Some(new_vertex) = queue.pop_front() {
             if visited_set.contains(&new_vertex) {
@@ -27,6 +31,7 @@ pub fn bfs_fold<T: Default, U>(graph : &dyn Graph<T>, vertex_id: &i32, fold_func
             visited_set.insert(new_vertex.to_owned());
         }
     }
+    acc
 }
 
 pub fn print_vertex<T: Default>(vertex: &Vertex<T>, _: ()) {
@@ -36,3 +41,7 @@ pub fn print_vertex<T: Default>(vertex: &Vertex<T>, _: ()) {
 pub fn bfs_print<T: Default>(graph: &dyn Graph<T>, vertex_id: &i32) {
     bfs_fold(graph, vertex_id, &print_vertex, ());
 }
+
+// pub fn build_bfs_tree<T: Default>(graph: &dyn Graph<T>, vertex_id: &i32) -> Graph<T> {
+
+// }

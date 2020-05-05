@@ -35,6 +35,7 @@ pub mod graph {
         fn neighbors(&self, vertex_id: &i32) -> Option<HashMap<i32, V>>;
         fn degree(&self, vertex_id: &i32) -> Option<usize>;
         fn get_vertices(&self) -> &HashMap<i32, Vertex<U>>;
+        fn vertex_set(&self) -> Vec<i32>;
     }
 
     impl<U: Default + Clone, V: Default + Clone> Graph<U, V> for AdjacencyListGraph<U, V> {
@@ -51,6 +52,14 @@ pub mod graph {
 
         fn degree(self: &AdjacencyListGraph<U, V>, vertex_id: &i32) -> Option<usize> {
             self.adj_list.get(vertex_id).map(|x| x.len())
+        }
+
+        fn vertex_set(&self) -> Vec<i32> {
+            let mut ve = vec![];
+            for v in self.graph.vertices.keys() {
+                ve.push(v.clone());
+            }
+            ve
         }
     }
 
@@ -88,6 +97,14 @@ pub mod graph {
                 }
             }
             Some(deg)
+        }
+
+        fn vertex_set(&self) -> Vec<i32> {
+            let mut ve = vec![];
+            for i in 0..(self.get_vertices().len()) {
+                ve.push(i as i32);
+            }
+            ve
         }
     }
 

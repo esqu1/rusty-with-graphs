@@ -15,12 +15,18 @@ impl<'a, V: Ord> BinaryHeap<V> {
         self.heap_array.len()
     }
 
-    fn new(arr: Vec<V>) -> BinaryHeap<V> {
-        BinaryHeap { heap_array: arr }
+    fn new() -> BinaryHeap<V> {
+        BinaryHeap { heap_array: vec![] }
     }
 
     fn iter(&'a self) -> std::slice::Iter<'a, V> {
         (&self.heap_array).iter()
+    }
+}
+
+impl<V: Ord> From<Vec<V>> for BinaryHeap<V> {
+    fn from(arr: Vec<V>) -> BinaryHeap<V> {
+        BinaryHeap { heap_array: arr }
     }
 }
 
@@ -77,6 +83,10 @@ macro_rules! impl_heaps {
                 }
             }
 
+            pub fn new() -> Self {
+                Self { heap: BinaryHeap::new() }
+            }
+
             pub fn size(&self) -> usize {
                 self.heap.size()
             }
@@ -100,7 +110,7 @@ macro_rules! impl_heaps {
                 }
             }
 
-            pub fn peek(self: &Self) -> Option<&V>{
+            pub fn peek(self: &Self) -> Option<&V> {
                 self.heap.heap_array.get(0)
             }
 
@@ -120,7 +130,7 @@ macro_rules! impl_heaps {
         impl<$t1: Ord> From<Vec<$t1>> for $t<$t1> {
             fn from(arr: Vec<V>) -> Self {
                 let mut heap = Self {
-                    heap: BinaryHeap::new(arr), 
+                    heap: BinaryHeap::from(arr),
                 };
                 heap.heapify();
                 heap

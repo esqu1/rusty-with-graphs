@@ -1,9 +1,12 @@
 mod lib;
 mod search;
 mod flow;
+mod shortest_path;
+mod datastructures;
 use lib::graph::GraphBase;
 use lib::graph::GraphMutate;
 use std::collections::HashMap;
+
 
 macro_rules! add_edge {
     ($g: expr, $weight: expr, $v1 : expr, $v2 : expr) => {

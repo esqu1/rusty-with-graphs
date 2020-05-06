@@ -6,8 +6,12 @@ mod search;
 // use datastructures::*;
 // use shortest_path::*;
 // use search::*;
-use graph::GraphMutate;
+#[allow(unused_imports)]
+use graph::Graph;
+#[allow(unused_imports)]
 use std::collections::HashMap;
+#[allow(unused_imports)]
+use std::collections::HashSet;
 
 #[allow(unused_macros)]
 macro_rules! add_edge {
@@ -26,8 +30,9 @@ mod tests {
     use super::*;
     #[test]
     fn graph_prints() {
-        let g: graph::GraphBase<i32> = graph::GraphBase {
+        let g: graph::GraphBase<i32, f64> = graph::GraphBase {
             vertices: HashMap::new(),
+            edges: vec![], 
             is_directed: false,
         };
 

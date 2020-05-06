@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
 
-pub fn bfs_fold<T: Default + Clone, V, U>(
+pub fn bfs_fold<T: Default + Clone, V: Default + Clone, U>(
     graph: &dyn Graph<T, V>,
     vertex_id: &i32,
     fold_func: &dyn Fn((Option<i32>, &Vertex<T>), U) -> U,
@@ -39,11 +39,11 @@ fn print_vertex<T: Default + Clone>((_, vertex): (Option<i32>, &Vertex<T>), _: (
     println!("Visiting vertex {}", vertex.id);
 }
 
-pub fn bfs_print<T: Default + Clone, V>(graph: &dyn Graph<T, V>, vertex_id: &i32) {
+pub fn bfs_print<T: Default + Clone, V: Default + Clone>(graph: &dyn Graph<T, V>, vertex_id: &i32) {
     bfs_fold(graph, vertex_id, &print_vertex, ());
 }
 
-pub fn bfs_path_exists<T: Default + Clone, V>(graph: &dyn Graph<T, V>, start: &i32, finish: &i32) {
+pub fn bfs_path_exists<T: Default + Clone, V: Default + Clone>(graph: &dyn Graph<T, V>, start: &i32, finish: &i32) {
     bfs_fold(
         graph,
         start,
@@ -60,7 +60,7 @@ fn add_pred<'a, T: Default + Clone>(
     acc
 }
 
-pub fn build_bfs_preds<T: Default + Clone, V>(
+pub fn build_bfs_preds<T: Default + Clone, V: Default + Clone>(
     graph: &dyn Graph<T, V>,
     vertex_id: &i32,
 ) -> HashMap<i32, Option<i32>> {

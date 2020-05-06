@@ -1,5 +1,5 @@
 use crate::datastructures;
-use crate::lib::graph::Graph;
+use crate::graph::Graph;
 use datastructures::heap::*;
 use std::cmp::Ordering;
 use std::ops::Add;

@@ -1,5 +1,5 @@
-use crate::lib::graph::Graph;
-use crate::lib::graph::Vertex;
+use crate::graph::Graph;
+use crate::graph::Vertex;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;

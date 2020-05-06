@@ -3,12 +3,13 @@ extern crate matrix;
 use matrix::prelude::*;
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct Vertex<T: Default + Clone> {
     pub id: i32,
     pub weight: T, // for max flows, ignored if used for weighted graphs
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct Edge<T: Default + Clone> {
     pub weight: T,
     pub v1: i32,
